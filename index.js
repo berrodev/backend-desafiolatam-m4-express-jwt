@@ -1,5 +1,9 @@
-import sequelize from './config/connectionDb';
-import Users from './models/Users';
+import express from 'express';
+import 'dotenv/config';
+import sequelize from './config/connectionDb.js';
+import Users from './models/Users.js';
+
+const app = express();
 
 const connectDb = async () => {
   try {
@@ -11,11 +15,17 @@ const connectDb = async () => {
   }
 };
 
+connectDb();
+
 app.get('/', async (req, res) => {
   try {
     const users = await Users.findAll();
     res.json(users);
   } catch (error) {
-    res.json({ message: error });
+    res.status(500).json({ message: error.message });
   }
+});
+
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });
